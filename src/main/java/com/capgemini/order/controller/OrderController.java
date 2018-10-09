@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import com.capgemini.order.entity.Order;
+import com.capgemini.order.exceptions.OrderNotFoundException;
 import com.capgemini.order.service.OrderService;
 
 @RestController
@@ -40,7 +41,7 @@ public class OrderController {
 
 	}
 	@GetMapping("/order")
-	public @ResponseBody ResponseEntity<List<Order>> getAllCustomer() {
+	public @ResponseBody ResponseEntity<List<Order>> getAllOrders() {
 		return new ResponseEntity<List<Order>>(orderService.getOrders(), HttpStatus.OK);
 	}
 	@GetMapping("/order1/{orderId}")
@@ -49,12 +50,16 @@ public class OrderController {
 		return new ResponseEntity<List<Order>>((List<Order>)o,HttpStatus.OK);
 	}
 	
+	
 	@DeleteMapping("/order/{orderId}")
-	public ResponseEntity<Order> deleteProduct(@RequestBody Order order) {
-		orderService.cancelOrder(order);	
-		return new ResponseEntity<Order>(HttpStatus.OK);
+	public ResponseEntity<Order> deleteOrderById(@PathVariable int orderId)
+			throws OrderNotFoundException {
+		Order order = orderService.getOrderById(orderId);
 
+		orderService.cancelOrder(order);
+		return new ResponseEntity<Order>(HttpStatus.OK);
 	}
+
 
 
 }

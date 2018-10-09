@@ -54,10 +54,18 @@ public class OrderServiceImpl implements OrderService{
 		List<Order> order1=(List<Order>) order.get();
 		return order1;
 	}
+	
+	
 	@Override
 	public void cancelOrder(Order order) {
-	
-		orderRepository.delete(order);
+		Optional<Order> orderFromDb = orderRepository.findById(order.getOrderId());
+		if (orderFromDb.isPresent()) {
+			orderRepository.delete(order);
+			return;
+		}
+		throw new OrderNotFoundException("does not found");
 	}
+
+	
 
 }
